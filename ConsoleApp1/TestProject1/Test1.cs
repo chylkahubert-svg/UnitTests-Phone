@@ -3,20 +3,17 @@
 namespace TestProject1
 {
     [TestClass]
-    public sealed class Test1
+    public class Test1
     {
         #region Konstruktor Tests
 
         [TestMethod]
         public void Konstruktor_DanePoprawne()
         {
-            string owner = "John Doe";
-            string phoneNumber = "123456789";
+            var phone = new Phone("Hubert", "123456789");
 
-            Phone phone = new(owner, phoneNumber);
-
-            Assert.AreEqual(owner, phone.Owner);
-            Assert.AreEqual(phoneNumber, phone.PhoneNumber);
+            Assert.AreEqual("Hubert", phone.Owner);
+            Assert.AreEqual("123456789", phone.PhoneNumber);
             Assert.AreEqual(0, phone.Count);
         }
 
@@ -24,28 +21,49 @@ namespace TestProject1
         public void Konstructor_WlascicielEmpty()
         {
             Assert.ThorwsException<ArgumentException>(() =>
-            new Phone("", phoneNumber));
+            new Phone("", "123456789"));
         }
 
         [TestMethod]
         public void Konstruktor_WlascicielNull()
         {
             Assert.ThrowException<ArgumentException>(() =>
-            new Phone(null, phoneNumber));
+            new Phone(null, "123456789"));
         }
 
         [TestMethod]
         public void Konstruktor_PhoneNull()
         {
             Assert.ThrowException<ArgumentException>(() =>
-            new Phone(owner, null));
+            new Phone("Hubert", null));
         }
 
         [TestMethod]
         public void Konstruktor_PhoneEmpty()
         {
             Assert.ThrowException<ArgumentException>(() =>
-            new Phone(owner, ""));
+            new Phone("Hubert", ""));
+        }
+
+        [TestMethod]
+        public void Konstruktor_PhoneTooShort()
+        {
+            Assert.ThrowException<ArgumentException>(() =>
+            new Phone("Hubert", "123"));
+        }
+
+        [TestMethod]
+        public void Konstruktor_PhoneTooLong()
+        {
+            Assert.ThrowException<ArgumentException>(() =>
+            new Phone("Hubert", "1234567890"));
+        }
+
+        [TestMethod]
+        public void Konstruktor_PhoneContainsLetters()
+        {
+            Assert.ThrowException<ArgumentException>(() =>
+            new Phone("Hubert", "12345ABCD"));
         }
 
         #endregion
@@ -55,7 +73,7 @@ namespace TestProject1
         [TestMethod]
         public void AddContact_NewContact()
         {
-            Phone phone = new(owner, phoneNumber);
+            var phone = new Phone("Hubert", "123456789");
 
             var result = phone.AddContact("Molenda", "987654321");
 
@@ -66,7 +84,7 @@ namespace TestProject1
         [TestMethod]
         public void AddContact_DuplicateContact()
         {
-            Phone phone = new(owner, phoneNumber);
+            var phone = new Phone("Hubert", "123456789");
 
             phone.AddContact("Molenda", "987654321");
             var result = phone.AddContact("Molenda", "111111111");
@@ -78,7 +96,7 @@ namespace TestProject1
         [TestMethod]
         public void AddContact_WhenPhoneBookFull()
         {
-            Phone phone = new(owner, phoneNumber);
+            var phone = new Phone("Hubert", "123456789");
 
             for (int i = 0; i < phone.PhoneBookCapacity; i++)
             {
@@ -96,7 +114,7 @@ namespace TestProject1
         [TestMethod]
         public void Call_ExistingContact()
         {
-            Phone phone = new(owner, phoneNumber);
+            var phone = new Phone("Hubert", "123456789");
             phone.AddContact("Molenda", "987654321");
 
             var result = phone.Call("Molenda");
@@ -108,7 +126,7 @@ namespace TestProject1
         [TestMethod]
         public void Call_NonExistingContact()
         {
-            Phone phone = new(owner, phoneNumber);
+            var phone = new Phone("Hubert", "123456789");
 
             Assert.ThrowsException<InvalidOperationException>(() =>
             phone.Call("Unknown");
